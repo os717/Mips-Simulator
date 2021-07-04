@@ -1,0 +1,36 @@
+#!/bin/bash
+
+sim=$1
+asm="test/assembly"
+bin="test/binary"
+
+count=0
+
+for x in $(find "$asm" -name '*.s')
+  do
+    #get bin file
+    binary=${x%.*}
+    binary=${binary##*/}
+
+    Id=$binary
+    binary=$bin/$binary.mips.bin
+
+    instr="$(sed '1q;d' $x | cut --delimiter=':' -f2)"
+    exit="$(sed '2q;d' $x | cut --delimiter=':' -f2)"
+    in="$(sed '3q;d' $x | cut --delimiter=':' -f2)"
+    out="$(sed '4q;d' $x | cut --delimiter=':' -f2)"
+    author="$(sed '5q;d' $x | cut --delimiter=':' -f2)"
+    message="$(sed '6q;d' $x | cut --delimiter=':' -f2)"
+
+    # run and print result as csv
+    if [ -f $binary ]; then
+        sout=$(echo $in | $sim $binary 2> /dev/null)
+        sret=$?
+        if [ $sret == $exit -a "$sout" == "$out" ]; then
+            echo "$Id, $instr, Pass, $author, $message"
+            ((count++))
+        else
+            echo "$Id, $instr, Fail, $author, $message"
+        fi
+    fi
+done
