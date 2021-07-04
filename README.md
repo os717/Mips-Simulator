@@ -1,8 +1,8 @@
-# arch2-2019-cw-Struggling_Students
+# MIPS-1 Simulator
 
-The simulator is made in c++
+The simulator was made in c++
 
-The testbench is made in bash
+The testbench was made in bash
 
 Use 'make simulator' to make the simulator
 
